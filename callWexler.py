@@ -1,5 +1,6 @@
 
-import scipy.integrate as integrate
+import scipy
+from scipy import integrate
 from math import erfc, erf, exp, sqrt, pi
 
 
