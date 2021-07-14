@@ -5,4 +5,11 @@ requests==2.25.1
 scipy==1.6.3
 seaborn==0.11.1
 streamlit==0.84.0
+python-utils==2.5.6
+six==1.16.0
+bytesbufio==1.0.3
+pybase64==1.1.4
+python-utils==2.5.6
+six==1.16.0
+XlsxWriter==1.4.4
 
