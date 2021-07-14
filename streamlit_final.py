@@ -10,7 +10,6 @@ import numpy as np
 import streamlit as st
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
-import plotly.graph_objects as go
 
 import re
 import utils
@@ -37,13 +36,12 @@ def collect_float(x): return [float(i)
 
 st.sidebar.header("Upload excel file as Input")
 excel_file = st.sidebar.file_uploader(' ',type=['xlsx'])
-#st.write("Please download the sample excel file from below")
 
 # Get model input
 
 def callGUIInputBioScreen():
-    # Option, Parameters, Domain, Observed, Modeled = callInputBioscreen()
-    Option, Parameters, Domain, Observed, Modeled = callInputDomenico()
+    Option, Parameters, Domain, Observed, Modeled = callInputBioscreen()
+    #Option, Parameters, Domain, Observed, Modeled = callInputDomenico()
 
     if excel_file is not None:
         df = pd.read_excel(excel_file,index_col=0)
@@ -314,19 +312,6 @@ plt.clabel(plt1, colors='black')
 plt.xlabel('y [m]', fontsize=12, fontweight='bold')
 plt.ylabel('x [m]', fontsize=12, fontweight='bold')
 col1.pyplot()
-# fig1 = go.Figure(data = go.Contour(x = Domain['y'], y = Domain['x'],
-#                                       z=sNew[:,:,xyContourZIndex],
-#                                       showscale=False,
-#                                       contours=dict(coloring ='heatmap',
-#                                                     showlabels = True,
-#                                                     labelfont = dict(size = 12,color = 'black'))))
-# fig1.update_layout(xaxis_title='y [m]',
-#                    yaxis_title= 'x [m]',
-#                    font=dict(
-#                             family="Courier New, monospace",
-#                             size=15,
-#                             color="black"))
-# col1.plotly_chart(fig1,use_container_width=True)
 
 # XZ contour
 col2.subheader("**X-Z contour plot**")
@@ -356,20 +341,6 @@ plt.clabel(plt2, colors='black')
 plt.xlabel('z [m]', fontsize=12, fontweight='bold')
 plt.ylabel('x [m]', fontsize=12, fontweight='bold')
 col2.pyplot()
-# fig2 = go.Figure(data = go.Contour(x = Domain['z'], y = Domain['x'],
-#                                       z=sNew[:,xzContourYIndex,:],
-#                                       showscale=False,
-#                                       contours=dict(coloring ='heatmap',
-#                                                     showlabels = True,
-#                                                     labelfont = dict(size = 12,color = 'white'))))
-# fig2.update_layout(xaxis_title='z [m]',
-#                    yaxis_title= 'x [m]',
-#                    font=dict(
-#                             family="Courier New, monospace",
-#                             size=15,
-#                             color="black"))
-# col2.plotly_chart(fig2,use_container_width=True)
-
 
 # YZ contour
 col3.subheader("**Y-Z contour plot**")
@@ -398,21 +369,6 @@ plt.xlabel('z [m]', fontsize=12, fontweight='bold')
 plt.ylabel('y [m]', fontsize=12, fontweight='bold')
 col3.pyplot()
 
-# fig3 = go.Figure(data = go.Contour(x = Domain['z'], y = Domain['y'],
-#                                       z=sNew[yzContourXIndex, :, :],
-#                                       showscale=False,
-#                                       contours=dict(coloring ='heatmap',
-#                                                     showlabels = True,
-#                                                     labelfont = dict(size = 12,color = 'white'))))
-# fig3.update_layout(xaxis_title='z [m]',
-#                    yaxis_title= 'y [m]',
-#                    font=dict(
-#                             family="Courier New, monospace",
-#                             size=15,
-#                             color="black"))
-# col3.plotly_chart(fig3,use_container_width=True)
-
-
 # Line plots
 col4, col5, col6 = st.beta_columns((1, 1, 1))
 # Z line
@@ -432,16 +388,6 @@ plt.xlabel('z [m]', fontsize=12, fontweight='bold')
 plt.ylabel(r'$C \ [mg L^{-1}]$', fontsize=12, fontweight='bold')
 col4.pyplot()
 
-# fig4 = go.Figure(data = go.Scatter(y=sNew[zLineXIndex,zLineYIndex, :],
-#                                             mode='lines+markers'))
-# fig4.update_layout(xaxis_title='z [m]',
-#                    yaxis_title= "C[mg/L]",
-#                    font=dict(
-#                             family="Courier New, monospace",
-#                             size=15,
-#                             color="RebeccaPurple"))
-# col4.plotly_chart(fig4,use_container_width=True)
-
 # Y line
 col5.subheader("**Y line plot**")
 if len(Domain['y']) > 1:
@@ -458,16 +404,6 @@ plt.plot(sNew[yLineXIndex, :, yLineZIndex])
 plt.xlabel('y [m]', fontsize=12, fontweight='bold')
 plt.ylabel(r'$C \ [mg L^{-1}]$', fontsize=12, fontweight='bold')
 col5.pyplot()
-# fig5 = go.Figure(data = go.Scatter(y=sNew[yLineXIndex, :, yLineZIndex],
-#                                             mode='lines+markers'))
-# fig5.update_layout(xaxis_title='y [m]',
-#                    yaxis_title= "C[mg/L]",
-#                    font=dict(
-#                             family="Courier New, monospace",
-#                             size=15,
-#                             color="RebeccaPurple"))
-# col5.plotly_chart(fig5,use_container_width=True)
-
 
 # X line
 col6.subheader("**X line plot**")
@@ -488,16 +424,6 @@ plt.plot(sNew[:, xLineYIndex, xLineZIndex])
 plt.xlabel('x [m]', fontsize=12, fontweight='bold')
 plt.ylabel(r'$C \ [mg L^{-1}]$', fontsize=12, fontweight='bold')
 col6.pyplot()
-
-# fig6 = go.Figure(data = go.Scatter(y=sNew[:, xLineYIndex, xLineZIndex],
-#                                             mode='lines+markers'))
-# fig6.update_layout(xaxis_title='x [m]',
-#                    yaxis_title= "C[mg/L]",
-#                    font=dict(
-#                             family="Courier New, monospace",
-#                             size=15,
-#                             color="RebeccaPurple"))
-# col6.plotly_chart(fig6,use_container_width=True)
 
 dt = dict()
 dt['boundary'] = Option['boundary']
@@ -546,11 +472,11 @@ def get_table_download_link(df):
 st.sidebar.header('Download the Excel file')
 st.sidebar.markdown(get_table_download_link(df1), unsafe_allow_html=True)
 
-col8 = st.beta_columns((1))
-st.header("Documentation")
-st.text("Insert documentation here")
+# col8 = st.beta_columns((1))
+# st.header("Documentation")
+# st.text("Insert documentation here")
 
-col9 = st.beta_columns((1))
-st.header("References")
-st.text("Insert references here")
+# col9 = st.beta_columns((1))
+# st.header("References")
+# st.text("Insert references here")
 
