@@ -282,152 +282,154 @@ def callGUIContaminantTransport(Parameters, Option, Domain):
 
 sWexler, sDomenico, sNew = callGUIContaminantTransport(
     Parameters, Option, Domain)
-
+st.subheader("**Please select checkbox to see the output**")
+checkbox = st.checkbox('Plot',value=True)
+if checkbox:
 # Plot results
 # Contour plots
-col1, col2, col3 = st.beta_columns((1, 1, 1))
-# XY contour
-col1.subheader("**X-Y contour plot**")
-if len(Domain['y']) > 1:
-    xyContour = col1.text_input(label='XY contour values',
-                                value=str(','.join(map(str, Domain['contours']))))
-    if xyContour == '':
-        st.warning("xyContour: Text input is empty, Please enter any value")
-        raise 'Please enter at least one value'
-    elif xyContour[-1] == ',':
-        st.warning(
-            "xyContour: Text input is ending with comma, Please remove comma after final value")
-        raise 'Please remove the comma after the final value'
-    elif (list(map(float, xyContour.split(','))) != sorted(list(map(float, xyContour.split(','))))):
-        st.warning("xyContour: Please enter the values in ascending order")
-        raise 'Please enter the values in decreasing order'
-    xyContour = collect_float(xyContour)
-if len(Domain['z']) > 1:
-    xyContourZ = col1.slider("XY contour: z slice",
-                             float(Domain['z1']), float(Domain['zN']),
-                             float(Domain['z1']), float(Domain['deltaZ']))
-    xyContourZIndex = np.searchsorted(Domain['z'], xyContourZ)
-else:
-    xyContourZIndex = 0
+    col1, col2, col3 = st.beta_columns((1, 1, 1))
+    # XY contour
+    col1.subheader("**X-Y contour plot**")
+    if len(Domain['y']) > 1:
+        xyContour = col1.text_input(label='XY contour values',
+                                    value=str(','.join(map(str, Domain['contours']))))
+        if xyContour == '':
+            st.warning("xyContour: Text input is empty, Please enter any value")
+            raise 'Please enter at least one value'
+        elif xyContour[-1] == ',':
+            st.warning(
+                "xyContour: Text input is ending with comma, Please remove comma after final value")
+            raise 'Please remove the comma after the final value'
+        elif (list(map(float, xyContour.split(','))) != sorted(list(map(float, xyContour.split(','))))):
+            st.warning("xyContour: Please enter the values in ascending order")
+            raise 'Please enter the values in decreasing order'
+        xyContour = collect_float(xyContour)
+    if len(Domain['z']) > 1:
+        xyContourZ = col1.slider("XY contour: z slice",
+                                 float(Domain['z1']), float(Domain['zN']),
+                                 float(Domain['z1']), float(Domain['deltaZ']))
+        xyContourZIndex = np.searchsorted(Domain['z'], xyContourZ)
+    else:
+        xyContourZIndex = 0
 
-plt1 = plt.contourf(Domain['y'], Domain['x'], sNew[:, :, xyContourZIndex],
-                    norm=LogNorm(), levels=xyContour, cmap='jet')
-plt.clabel(plt1, colors='black')
-plt.xlabel('y [m]', fontsize=12, fontweight='bold')
-plt.ylabel('x [m]', fontsize=12, fontweight='bold')
-col1.pyplot()
+    plt1 = plt.contourf(Domain['y'], Domain['x'], sNew[:, :, xyContourZIndex],
+                        norm=LogNorm(), levels=xyContour, cmap='jet')
+    plt.clabel(plt1, colors='black')
+    plt.xlabel('y [m]', fontsize=12, fontweight='bold')
+    plt.ylabel('x [m]', fontsize=12, fontweight='bold')
+    col1.pyplot()
 
-# XZ contour
-col2.subheader("**X-Z contour plot**")
-if len(Domain['z']) > 1:
-    xzContour = col2.text_input(label='XZ contour values',
-                                value=str(','.join(map(str, Domain['contours']))))
-    if xzContour == '':
-        st.warning("xzContour: Text input is empty, Please enter any value")
-        raise 'Please enter at least one value'
-    elif xzContour[-1] == ',':
-        st.warning(
-            "xzContour: Text input is ending with comma, Please remove comma after final value")
-        raise 'Please remove the comma after the final value'
-    elif (list(map(float, xzContour.split(','))) != sorted(list(map(float, xzContour.split(','))))):
-        st.warning("xzContour: Please enter the values in ascending order")
-        raise 'Please enter the values in decreasing order'
-    xzContour = collect_float(xzContour)
-if len(Domain['y']) > 1:
-    xzContourY = col2.slider("XZ contour: y slice",
-                             float(Domain['y1']), float(Domain['yN']), float(Domain['y1']), float(Domain['deltaY']))
-    xzContourYIndex = np.searchsorted(Domain['y'], xzContourY)
-else:
-    xzContourYIndex = 0
-plt2 = plt.contourf(Domain['z'], Domain['x'], sNew[:, xzContourYIndex, :],
-                    norm=LogNorm(), levels=xzContour, cmap='jet')
-plt.clabel(plt2, colors='black')
-plt.xlabel('z [m]', fontsize=12, fontweight='bold')
-plt.ylabel('x [m]', fontsize=12, fontweight='bold')
-col2.pyplot()
+    # XZ contour
+    col2.subheader("**X-Z contour plot**")
+    if len(Domain['z']) > 1:
+        xzContour = col2.text_input(label='XZ contour values',
+                                    value=str(','.join(map(str, Domain['contours']))))
+        if xzContour == '':
+            st.warning("xzContour: Text input is empty, Please enter any value")
+            raise 'Please enter at least one value'
+        elif xzContour[-1] == ',':
+            st.warning(
+                "xzContour: Text input is ending with comma, Please remove comma after final value")
+            raise 'Please remove the comma after the final value'
+        elif (list(map(float, xzContour.split(','))) != sorted(list(map(float, xzContour.split(','))))):
+            st.warning("xzContour: Please enter the values in ascending order")
+            raise 'Please enter the values in decreasing order'
+        xzContour = collect_float(xzContour)
+    if len(Domain['y']) > 1:
+        xzContourY = col2.slider("XZ contour: y slice",
+                                 float(Domain['y1']), float(Domain['yN']), float(Domain['y1']), float(Domain['deltaY']))
+        xzContourYIndex = np.searchsorted(Domain['y'], xzContourY)
+    else:
+        xzContourYIndex = 0
+    plt2 = plt.contourf(Domain['z'], Domain['x'], sNew[:, xzContourYIndex, :],
+                        norm=LogNorm(), levels=xzContour, cmap='jet')
+    plt.clabel(plt2, colors='black')
+    plt.xlabel('z [m]', fontsize=12, fontweight='bold')
+    plt.ylabel('x [m]', fontsize=12, fontweight='bold')
+    col2.pyplot()
 
-# YZ contour
-col3.subheader("**Y-Z contour plot**")
-if (len(Domain['y']) > 1) and (len(Domain['z']) > 1):
-    yzContour = col3.text_input(label='YZ contour values',
-                                value=str(','.join(map(str, Domain['contours']))))
-    if yzContour == '':
-        st.warning("yzContour: Text input is empty, Please enter any value")
-        raise 'Please enter at least one value'
-    elif yzContour[-1] == ',':
-        st.warning(
-            "yzContour: Text input is ending with comma, Please remove comma after final value")
-        raise 'Please remove the comma after the final value'
-    elif (list(map(float, yzContour.split(','))) != sorted(list(map(float, yzContour.split(','))))):
-        st.warning("yzContour: Please enter the values in ascending order")
-        raise 'Please enter the values in decreasing order'
-    yzContour = collect_float(yzContour)
-    yzContourX = col3.slider("YZ contour: x slice",
-                             float(Domain['x1']), float(Domain['xN']), float(Domain['x1']), float(Domain['deltaX']))
-    yzContourXIndex = np.searchsorted(Domain['x'], yzContourX)
+    # YZ contour
+    col3.subheader("**Y-Z contour plot**")
+    if (len(Domain['y']) > 1) and (len(Domain['z']) > 1):
+        yzContour = col3.text_input(label='YZ contour values',
+                                    value=str(','.join(map(str, Domain['contours']))))
+        if yzContour == '':
+            st.warning("yzContour: Text input is empty, Please enter any value")
+            raise 'Please enter at least one value'
+        elif yzContour[-1] == ',':
+            st.warning(
+                "yzContour: Text input is ending with comma, Please remove comma after final value")
+            raise 'Please remove the comma after the final value'
+        elif (list(map(float, yzContour.split(','))) != sorted(list(map(float, yzContour.split(','))))):
+            st.warning("yzContour: Please enter the values in ascending order")
+            raise 'Please enter the values in decreasing order'
+        yzContour = collect_float(yzContour)
+        yzContourX = col3.slider("YZ contour: x slice",
+                                 float(Domain['x1']), float(Domain['xN']), float(Domain['x1']), float(Domain['deltaX']))
+        yzContourXIndex = np.searchsorted(Domain['x'], yzContourX)
 
-plt3 = plt.contourf(Domain['z'], Domain['y'], sNew[yzContourXIndex, :, :],
-                    norm=LogNorm(), levels=yzContour, cmap='jet')
-plt.clabel(plt3, colors='black')
-plt.xlabel('z [m]', fontsize=12, fontweight='bold')
-plt.ylabel('y [m]', fontsize=12, fontweight='bold')
-col3.pyplot()
+    plt3 = plt.contourf(Domain['z'], Domain['y'], sNew[yzContourXIndex, :, :],
+                        norm=LogNorm(), levels=yzContour, cmap='jet')
+    plt.clabel(plt3, colors='black')
+    plt.xlabel('z [m]', fontsize=12, fontweight='bold')
+    plt.ylabel('y [m]', fontsize=12, fontweight='bold')
+    col3.pyplot()
 
-# Line plots
-col4, col5, col6 = st.beta_columns((1, 1, 1))
-# Z line
-col4.subheader("**Z line plot**")
-if len(Domain['z']) > 1:
-    zLineX = col4.slider("z line: x slice", float(Domain['x1']), float(
-        Domain['xN']), float(Domain['x1']), float(Domain['deltaX']))
-zLineXIndex = np.searchsorted(Domain['x'], zLineX)
-if len(Domain['y']) > 1:
-    zLineY = col4.slider("z line: y sice", float(Domain['y1']), float(
-        Domain['yN']), float(Domain['y1']), float(Domain['deltaY']))
-    zLineYIndex = np.searchsorted(Domain['y'], zLineY)
-else:
-    zLineYIndex = 0
-plt.plot(sNew[zLineXIndex, zLineYIndex, :])
-plt.xlabel('z [m]', fontsize=12, fontweight='bold')
-plt.ylabel(r'$C \ [mg L^{-1}]$', fontsize=12, fontweight='bold')
-col4.pyplot()
+    # Line plots
+    col4, col5, col6 = st.beta_columns((1, 1, 1))
+    # Z line
+    col4.subheader("**Z line plot**")
+    if len(Domain['z']) > 1:
+        zLineX = col4.slider("z line: x slice", float(Domain['x1']), float(
+            Domain['xN']), float(Domain['x1']), float(Domain['deltaX']))
+    zLineXIndex = np.searchsorted(Domain['x'], zLineX)
+    if len(Domain['y']) > 1:
+        zLineY = col4.slider("z line: y sice", float(Domain['y1']), float(
+            Domain['yN']), float(Domain['y1']), float(Domain['deltaY']))
+        zLineYIndex = np.searchsorted(Domain['y'], zLineY)
+    else:
+        zLineYIndex = 0
+    plt.plot(sNew[zLineXIndex, zLineYIndex, :])
+    plt.xlabel('z [m]', fontsize=12, fontweight='bold')
+    plt.ylabel(r'$C \ [mg L^{-1}]$', fontsize=12, fontweight='bold')
+    col4.pyplot()
 
-# Y line
-col5.subheader("**Y line plot**")
-if len(Domain['y']) > 1:
-    yLineX = col5.slider("y line: x slice", float(Domain['x1']), float(
-        Domain['xN']), float(Domain['x1']), float(Domain['deltaX']))
-yLineXIndex = np.searchsorted(Domain['x'], yLineX)
-if len(Domain['z']) > 1:
-    yLineZ = col5.slider("y line: z sice", float(Domain['z1']), float(
-        Domain['zN']), float(Domain['z1']), max(1.0, float(Domain['deltaZ'])))
-    yLineZIndex = np.searchsorted(Domain['z'], yLineZ)
-else:
-    yLineZIndex = 0
-plt.plot(sNew[yLineXIndex, :, yLineZIndex])
-plt.xlabel('y [m]', fontsize=12, fontweight='bold')
-plt.ylabel(r'$C \ [mg L^{-1}]$', fontsize=12, fontweight='bold')
-col5.pyplot()
+    # Y line
+    col5.subheader("**Y line plot**")
+    if len(Domain['y']) > 1:
+        yLineX = col5.slider("y line: x slice", float(Domain['x1']), float(
+            Domain['xN']), float(Domain['x1']), float(Domain['deltaX']))
+    yLineXIndex = np.searchsorted(Domain['x'], yLineX)
+    if len(Domain['z']) > 1:
+        yLineZ = col5.slider("y line: z sice", float(Domain['z1']), float(
+            Domain['zN']), float(Domain['z1']), max(1.0, float(Domain['deltaZ'])))
+        yLineZIndex = np.searchsorted(Domain['z'], yLineZ)
+    else:
+        yLineZIndex = 0
+    plt.plot(sNew[yLineXIndex, :, yLineZIndex])
+    plt.xlabel('y [m]', fontsize=12, fontweight='bold')
+    plt.ylabel(r'$C \ [mg L^{-1}]$', fontsize=12, fontweight='bold')
+    col5.pyplot()
 
-# X line
-col6.subheader("**X line plot**")
-if len(Domain['y']) > 1:
-    xLineY = col6.slider("x line: y slice", float(Domain['y1']), float(
-        Domain['yN']), float(Domain['y1']), float(Domain['deltaY']))
-    xLineYIndex = np.searchsorted(Domain['y'], xLineY)
-else:
-    xLineYIndex = 0
-if len(Domain['z']) > 1:
-    xLineZ = col6.slider("x line: z sice", float(Domain['z1']), float(
-        Domain['zN']), float(Domain['z1']), float(Domain['deltaZ']))
-    xLineZIndex = np.searchsorted(Domain['z'], xLineZ)
-else:
-    xLineZIndex = 0
+    # X line
+    col6.subheader("**X line plot**")
+    if len(Domain['y']) > 1:
+        xLineY = col6.slider("x line: y slice", float(Domain['y1']), float(
+            Domain['yN']), float(Domain['y1']), float(Domain['deltaY']))
+        xLineYIndex = np.searchsorted(Domain['y'], xLineY)
+    else:
+        xLineYIndex = 0
+    if len(Domain['z']) > 1:
+        xLineZ = col6.slider("x line: z sice", float(Domain['z1']), float(
+            Domain['zN']), float(Domain['z1']), float(Domain['deltaZ']))
+        xLineZIndex = np.searchsorted(Domain['z'], xLineZ)
+    else:
+        xLineZIndex = 0
 
-plt.plot(sNew[:, xLineYIndex, xLineZIndex])
-plt.xlabel('x [m]', fontsize=12, fontweight='bold')
-plt.ylabel(r'$C \ [mg L^{-1}]$', fontsize=12, fontweight='bold')
-col6.pyplot()
+    plt.plot(sNew[:, xLineYIndex, xLineZIndex])
+    plt.xlabel('x [m]', fontsize=12, fontweight='bold')
+    plt.ylabel(r'$C \ [mg L^{-1}]$', fontsize=12, fontweight='bold')
+    col6.pyplot()
 
 dt = dict()
 dt['boundary'] = Option['boundary']
