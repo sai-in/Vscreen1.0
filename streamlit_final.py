@@ -14,6 +14,7 @@ import numpy as np
 import streamlit as st
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
+#import plotly.graph_objects as go
 
 import re
 import utils
@@ -41,11 +42,13 @@ def collect_float(x): return [float(i)
 st.sidebar.header("Upload excel file as Input")
 excel_file = st.sidebar.file_uploader(' ',type=['xlsx'])
 
-# Get model input
+st.subheader("**Please select checkbox to see the output**")
+checkbox = st.checkbox('Plot',value=True)
 
+# Get model input
 def callGUIInputBioScreen():
-    Option, Parameters, Domain, Observed, Modeled = callInputBioscreen()
-    #Option, Parameters, Domain, Observed, Modeled = callInputDomenico()
+    # Option, Parameters, Domain, Observed, Modeled = callInputBioscreen()
+    Option, Parameters, Domain, Observed, Modeled = callInputDomenico()
 
     if excel_file is not None:
         df = pd.read_excel(excel_file,index_col=0)
@@ -269,7 +272,6 @@ def callGUIInputBioScreen():
 
 
 Option, Parameters, Domain, Observed, Modeled = callGUIInputBioScreen()
-cWexler, cDomenico, cNew = callInitializeC(Domain, Parameters, Option)
 
 
 @st.cache(suppress_st_warning=True)
@@ -279,14 +281,14 @@ def callGUIContaminantTransport(Parameters, Option, Domain):
 
     return sWexler, sDomenico, sNew
 
-
-sWexler, sDomenico, sNew = callGUIContaminantTransport(
-    Parameters, Option, Domain)
-st.subheader("**Please select checkbox to see the output**")
-checkbox = st.checkbox('Plot',value=True)
 if checkbox:
-# Plot results
-# Contour plots
+    cWexler, cDomenico, cNew = callInitializeC(Domain, Parameters, Option)
+    sWexler, sDomenico, sNew = callGUIContaminantTransport(
+        Parameters, Option, Domain)
+
+if checkbox:
+    # Plot results
+    # Contour plots
     col1, col2, col3 = st.beta_columns((1, 1, 1))
     # XY contour
     col1.subheader("**X-Y contour plot**")
@@ -314,10 +316,25 @@ if checkbox:
 
     plt1 = plt.contourf(Domain['y'], Domain['x'], sNew[:, :, xyContourZIndex],
                         norm=LogNorm(), levels=xyContour, cmap='jet')
+    # plt1 = plt.contour(Domain['y'], Domain['x'], sNew[:, :, xyContourZIndex],
+    #                     levels=xyContour, cmap='jet')
     plt.clabel(plt1, colors='black')
     plt.xlabel('y [m]', fontsize=12, fontweight='bold')
     plt.ylabel('x [m]', fontsize=12, fontweight='bold')
     col1.pyplot()
+    # fig1 = go.Figure(data = go.Contour(x = Domain['y'], y = Domain['x'],
+    #                                       z=sNew[:,:,xyContourZIndex],
+    #                                       showscale=False,
+    #                                       contours=dict(coloring ='heatmap',
+    #                                                     showlabels = True,
+    #                                                     labelfont = dict(size = 12,color = 'black'))))
+    # fig1.update_layout(xaxis_title='y [m]',
+    #                    yaxis_title= 'x [m]',
+    #                    font=dict(
+    #                             family="Courier New, monospace",
+    #                             size=15,
+    #                             color="black"))
+    # col1.plotly_chart(fig1,use_container_width=True)
 
     # XZ contour
     col2.subheader("**X-Z contour plot**")
@@ -347,6 +364,20 @@ if checkbox:
     plt.xlabel('z [m]', fontsize=12, fontweight='bold')
     plt.ylabel('x [m]', fontsize=12, fontweight='bold')
     col2.pyplot()
+    # fig2 = go.Figure(data = go.Contour(x = Domain['z'], y = Domain['x'],
+    #                                       z=sNew[:,xzContourYIndex,:],
+    #                                       showscale=False,
+    #                                       contours=dict(coloring ='heatmap',
+    #                                                     showlabels = True,
+    #                                                     labelfont = dict(size = 12,color = 'white'))))
+    # fig2.update_layout(xaxis_title='z [m]',
+    #                    yaxis_title= 'x [m]',
+    #                    font=dict(
+    #                             family="Courier New, monospace",
+    #                             size=15,
+    #                             color="black"))
+    # col2.plotly_chart(fig2,use_container_width=True)
+
 
     # YZ contour
     col3.subheader("**Y-Z contour plot**")
@@ -375,6 +406,21 @@ if checkbox:
     plt.ylabel('y [m]', fontsize=12, fontweight='bold')
     col3.pyplot()
 
+    # fig3 = go.Figure(data = go.Contour(x = Domain['z'], y = Domain['y'],
+    #                                       z=sNew[yzContourXIndex, :, :],
+    #                                       showscale=False,
+    #                                       contours=dict(coloring ='heatmap',
+    #                                                     showlabels = True,
+    #                                                     labelfont = dict(size = 12,color = 'white'))))
+    # fig3.update_layout(xaxis_title='z [m]',
+    #                    yaxis_title= 'y [m]',
+    #                    font=dict(
+    #                             family="Courier New, monospace",
+    #                             size=15,
+    #                             color="black"))
+    # col3.plotly_chart(fig3,use_container_width=True)
+
+
     # Line plots
     col4, col5, col6 = st.beta_columns((1, 1, 1))
     # Z line
@@ -394,6 +440,16 @@ if checkbox:
     plt.ylabel(r'$C \ [mg L^{-1}]$', fontsize=12, fontweight='bold')
     col4.pyplot()
 
+    # fig4 = go.Figure(data = go.Scatter(y=sNew[zLineXIndex,zLineYIndex, :],
+    #                                             mode='lines+markers'))
+    # fig4.update_layout(xaxis_title='z [m]',
+    #                    yaxis_title= "C[mg/L]",
+    #                    font=dict(
+    #                             family="Courier New, monospace",
+    #                             size=15,
+    #                             color="RebeccaPurple"))
+    # col4.plotly_chart(fig4,use_container_width=True)
+
     # Y line
     col5.subheader("**Y line plot**")
     if len(Domain['y']) > 1:
@@ -410,6 +466,16 @@ if checkbox:
     plt.xlabel('y [m]', fontsize=12, fontweight='bold')
     plt.ylabel(r'$C \ [mg L^{-1}]$', fontsize=12, fontweight='bold')
     col5.pyplot()
+    # fig5 = go.Figure(data = go.Scatter(y=sNew[yLineXIndex, :, yLineZIndex],
+    #                                             mode='lines+markers'))
+    # fig5.update_layout(xaxis_title='y [m]',
+    #                    yaxis_title= "C[mg/L]",
+    #                    font=dict(
+    #                             family="Courier New, monospace",
+    #                             size=15,
+    #                             color="RebeccaPurple"))
+    # col5.plotly_chart(fig5,use_container_width=True)
+
 
     # X line
     col6.subheader("**X line plot**")
@@ -430,6 +496,71 @@ if checkbox:
     plt.xlabel('x [m]', fontsize=12, fontweight='bold')
     plt.ylabel(r'$C \ [mg L^{-1}]$', fontsize=12, fontweight='bold')
     col6.pyplot()
+
+    # fig6 = go.Figure(data = go.Scatter(y=sNew[:, xLineYIndex, xLineZIndex],
+    #                                             mode='lines+markers'))
+    # fig6.update_layout(xaxis_title='x [m]',
+    #                    yaxis_title= "C[mg/L]",
+    #                    font=dict(
+    #                             family="Courier New, monospace",
+    #                             size=15,
+    #                             color="RebeccaPurple"))
+    # col6.plotly_chart(fig6,use_container_width=True)
+
+def to_excel(df):
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    df.to_excel(writer, sheet_name='Sheet1')
+    writer.save()
+    processed_data = output.getvalue()
+    return processed_data
+
+def get_table_download_link(df):
+    val = to_excel(df)
+    b64 = base64.b64encode(val)
+    return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="Concentrations.xlsx">Download Excel file</a>'
+
+if checkbox:
+    col10,col11,col12 = st.beta_columns((1,1,1))
+    with col10:
+        st.subheader('**Concentrations along X-Y**')
+        if len(Domain['z']) > 1:
+            Z_index = st.slider('Z_index',float(Domain['z1']), float(
+                Domain['zN']), float(Domain['z1']), float(Domain['deltaZ']))
+            Zindex = np.searchsorted(Domain['z'], Z_index)
+        else:
+            Zindex = 0
+        Z_array = np.array(sNew[:,:,Zindex])
+        df_Z = pd.DataFrame(Z_array).T
+
+        st.markdown(get_table_download_link(df_Z), unsafe_allow_html=True)
+
+    with col11:
+        st.subheader('**Concentrations along X-Z**')
+        if len(Domain['y']) > 1:
+            Y_index = st.slider('Y_index',float(Domain['y1']), float(
+                Domain['yN']), float(Domain['y1']), float(Domain['deltaY']))
+            Yindex = np.searchsorted(Domain['y'], Z_index)
+        else:
+            Yindex = 0
+        Y_array = np.array(sNew[:,Yindex,:])
+        df_Y = pd.DataFrame(Y_array).T
+
+        st.markdown(get_table_download_link(df_Y), unsafe_allow_html=True)
+
+    with col12:
+        st.subheader('**Concentrations along Y-Z**')
+        if len(Domain['x']) > 1:
+            X_index = st.slider('X_index',float(Domain['x1']), float(
+                Domain['xN']), float(Domain['x1']), float(Domain['deltaX']))
+            Xindex = np.searchsorted(Domain['x'], Z_index)
+        else:
+            Xindex = 0
+        X_array = np.array(sNew[Xindex,:,:])
+        df_X = pd.DataFrame(X_array).T
+
+        st.markdown(get_table_download_link(df_X), unsafe_allow_html=True)
+
 
 dt = dict()
 dt['boundary'] = Option['boundary']
@@ -462,20 +593,20 @@ dt['t1']     = str(','.join(map(str, Domain['t1'])))
 df1 = pd.DataFrame({'Parameters':dt.keys(),'Values':dt.values()})
 df1.set_index('Parameters',inplace=True)
 #st.write(df1)
-def to_excel(df):
-    output = BytesIO()
-    writer = pd.ExcelWriter(output, engine='xlsxwriter')
-    df.to_excel(writer, sheet_name='Sheet1')
-    writer.save()
-    processed_data = output.getvalue()
-    return processed_data
+# def to_excel(df):
+#     output = BytesIO()
+#     writer = pd.ExcelWriter(output, engine='xlsxwriter')
+#     df.to_excel(writer, sheet_name='Sheet1')
+#     writer.save()
+#     processed_data = output.getvalue()
+#     return processed_data
 
 def get_table_download_link(df):
     val = to_excel(df)
     b64 = base64.b64encode(val)
     return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="Your_File.xlsx">Download Excel file</a>'
 
-st.sidebar.header('Download the Excel file')
+st.sidebar.header('Download Input Parameter values')
 st.sidebar.markdown(get_table_download_link(df1), unsafe_allow_html=True)
 
 # col8 = st.beta_columns((1))
@@ -485,3 +616,5 @@ st.sidebar.markdown(get_table_download_link(df1), unsafe_allow_html=True)
 # col9 = st.beta_columns((1))
 # st.header("References")
 # st.text("Insert references here")
+
+
